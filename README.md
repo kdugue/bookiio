@@ -126,6 +126,15 @@ cd ~/bookio && git pull && cd client && npm run build
 # Restart the server (Ctrl+C in the server terminal, then node index.js)
 ```
 
+### Useful commands
+
+Remove all non-ready books from the database (run on the VM):
+
+```bash
+cd ~/bookio/server
+node -e 'const fs=require("fs");const db=JSON.parse(fs.readFileSync("db.json"));db.books=db.books.filter(b=>b.status==="ready");fs.writeFileSync("db.json",JSON.stringify(db,null,2));console.log(db.books.map(b=>b.title))'
+```
+
 ## Tech Stack
 
 | Layer | Technology |
