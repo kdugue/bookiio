@@ -3,7 +3,11 @@ set -e
 
 echo "=== Bookio VM Setup ==="
 
-# Install Node.js 22
+# Install git and Node.js 22
+echo "Installing system dependencies..."
+sudo apt-get update -y
+sudo apt-get install -y git
+
 if ! command -v node &> /dev/null || [[ $(node -v) != v22* ]]; then
   echo "Installing Node.js 22..."
   curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
@@ -18,7 +22,7 @@ if [ -d "$REPO_DIR" ]; then
   cd "$REPO_DIR" && git pull
 else
   echo "Cloning repo..."
-  git clone https://github.com/$1.git "$REPO_DIR"
+  git clone https://github.com/kdugue/bookiio.git "$REPO_DIR"
   cd "$REPO_DIR"
 fi
 
