@@ -5,7 +5,15 @@ import { generateQuiz } from "../store/quizSlice.js";
 const statusStyles = {
   ready: "bg-emerald-100 text-emerald-800",
   processing: "bg-amber-100 text-amber-800",
+  pending_review: "bg-blue-100 text-blue-800",
   error: "bg-red-100 text-red-800",
+};
+
+const statusLabels = {
+  ready: "ready",
+  processing: "processing",
+  pending_review: "pending review",
+  error: "error",
 };
 
 const sourceLabels = {
@@ -37,7 +45,7 @@ export default function BookCard({ book }) {
         <span
           className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase ${badge}`}
         >
-          {book.status}
+          {statusLabels[book.status] ?? book.status}
         </span>
       </div>
 

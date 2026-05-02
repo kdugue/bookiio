@@ -16,6 +16,14 @@ export const uploadBook = createAsyncThunk(
   }
 );
 
+export const confirmBook = createAsyncThunk(
+  "library/confirmBook",
+  async ({ bookId, title, author }) => {
+    const { data } = await api.patch(`/api/v1/library/${bookId}`, { title, author });
+    return data;
+  }
+);
+
 const librarySlice = createSlice({
   name: "library",
   initialState: {
@@ -39,6 +47,10 @@ const librarySlice = createSlice({
       })
       .addCase(uploadBook.fulfilled, (state, action) => {
         state.books.push(action.payload);
+      })
+      .addCase(confirmBook.fulfilled, (state, action) => {
+        const idx = state.books.findIndex((b) => b.id === action.payload.id);
+        if (idx !== -1) state.books[idx] = action.payload;
       });
   },
 });

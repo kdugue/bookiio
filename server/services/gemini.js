@@ -13,4 +13,18 @@ export async function chatCompletion(systemPrompt, userPrompt, { model = "gemini
   return response.text;
 }
 
+const DETECT_PROMPT = `You are a book identification assistant. Given a text excerpt from a book, identify the book's title and author.
+Return ONLY valid JSON with no markdown formatting: {"title": "...", "author": "..."}
+If you cannot determine the title, use your best guess. If you cannot determine the author, use "Unknown".`;
+
+export async function detectBookMetadata(textSample) {
+  const raw = await chatCompletion(DETECT_PROMPT, textSample, { temperature: 0.2 });
+  const cleaned = raw.replace(/```json\s*/g, "").replace(/```/g, "").trim();
+  const result = JSON.parse(cleaned);
+  return {
+    title: result.title || "Untitled",
+    author: result.author || "Unknown",
+  };
+}
+
 export default ai;

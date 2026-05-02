@@ -1,9 +1,15 @@
 import { Router } from "express";
 import multer from "multer";
 import path from "path";
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
 import { v4 as uuid } from "uuid";
 import { readDb, writeDb } from "../services/db.js";
 import { ingestBook } from "../services/pipeline.js";
+import { detectBookMetadata } from "../services/gemini.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const UPLOADS_DIR = path.join(__dirname, "..", "uploads");
 
 const router = Router();
 
@@ -35,13 +41,29 @@ router.post("/upload", (req, res, next) => {
 }, async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "A PDF or TXT file is required" });
 
+  const fallbackTitle = path.parse(req.file.originalname).name;
+  let detectedTitle = fallbackTitle;
+  let detectedAuthor = "Unknown";
+
+  try {
+    const filepath = path.join(UPLOADS_DIR, req.file.filename);
+    const raw = await fs.readFile(filepath, "utf-8");
+    const sample = raw.substring(0, 2000);
+    const meta = await detectBookMetadata(sample);
+    detectedTitle = meta.title;
+    detectedAuthor = meta.author;
+    console.log(`[upload] Detected: "${detectedTitle}" by ${detectedAuthor}`);
+  } catch (err) {
+    console.error("[upload] Metadata detection failed, using filename:", err.message);
+  }
+
   const db = await readDb();
   const book = {
     id: uuid(),
-    title: req.body.title || path.parse(req.file.originalname).name,
-    author: req.body.author || "Unknown",
+    title: detectedTitle,
+    author: detectedAuthor,
     filename: req.file.filename,
-    status: "processing",
+    status: "pending_review",
     source: "user_upload",
     addedAt: new Date().toISOString(),
   };
@@ -49,12 +71,26 @@ router.post("/upload", (req, res, next) => {
   db.books.push(book);
   await writeDb(db);
 
-  // Fire-and-forget ingestion; status updates happen inside pipeline
-  ingestBook(book.id).catch((err) =>
-    console.error(`Ingestion failed for ${book.id}:`, err)
+  res.status(201).json(book);
+});
+
+router.patch("/:bookId", async (req, res) => {
+  const { bookId } = req.params;
+  const { title, author } = req.body;
+  const db = await readDb();
+  const book = db.books.find((b) => b.id === bookId);
+  if (!book) return res.status(404).json({ error: "Book not found" });
+
+  if (title) book.title = title;
+  if (author) book.author = author;
+  book.status = "processing";
+  await writeDb(db);
+
+  ingestBook(bookId).catch((err) =>
+    console.error(`Ingestion failed for ${bookId}:`, err)
   );
 
-  res.status(201).json(book);
+  res.json(book);
 });
 
 router.post("/:bookId/ingest", async (req, res) => {
