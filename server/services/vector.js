@@ -1,5 +1,4 @@
 import { ChromaClient } from "chromadb";
-import { embedTexts } from "./gemini.js";
 
 const client = new ChromaClient({
   host: process.env.CHROMA_HOST || "localhost",
@@ -7,18 +6,11 @@ const client = new ChromaClient({
 });
 
 async function getCollection(bookId) {
-  return client.getOrCreateCollection({
-    name: `book-${bookId}`,
-    metadata: { "hnsw:space": "cosine" },
-  });
+  return client.getOrCreateCollection({ name: `book-${bookId}` });
 }
 
 export async function storeChunks(bookId, chunks, chapterIds = []) {
   const collection = await getCollection(bookId);
-
-  console.log(`[vector] Embedding ${chunks.length} chunks via Gemini...`);
-  const embeddings = await embedTexts(chunks);
-  console.log(`[vector] Embedding complete, storing in ChromaDB...`);
 
   const batchSize = 50;
   for (let i = 0; i < chunks.length; i += batchSize) {
@@ -26,7 +18,6 @@ export async function storeChunks(bookId, chunks, chapterIds = []) {
     await collection.add({
       ids: batch.map((_, idx) => `${bookId}-chunk-${i + idx}`),
       documents: batch,
-      embeddings: embeddings.slice(i, i + batchSize),
       metadatas: batch.map((_, idx) => ({
         bookId,
         chunkIndex: i + idx,
@@ -40,11 +31,8 @@ export async function storeChunks(bookId, chunks, chapterIds = []) {
 
 export async function queryChunks(bookId, queryText, nResults = 5, chapterId = null) {
   const collection = await getCollection(bookId);
-
-  const [queryEmbedding] = await embedTexts([queryText]);
-
   const queryOpts = {
-    queryEmbeddings: [queryEmbedding],
+    queryTexts: [queryText],
     nResults,
   };
 
