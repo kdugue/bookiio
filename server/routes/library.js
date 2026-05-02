@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
     cb(null, ext === ".pdf" || ext === ".txt");
@@ -24,8 +25,15 @@ router.get("/", async (_req, res) => {
   res.json(db.books);
 });
 
-router.post("/upload", upload.single("file"), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "A PDF file is required" });
+router.post("/upload", (req, res, next) => {
+  upload.single("file")(req, res, (err) => {
+    if (err && err.code === "LIMIT_FILE_SIZE")
+      return res.status(413).json({ error: "File exceeds 5 MB limit" });
+    if (err) return res.status(400).json({ error: err.message });
+    next();
+  });
+}, async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "A PDF or TXT file is required" });
 
   const db = await readDb();
   const book = {
