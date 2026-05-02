@@ -6,20 +6,8 @@ export default function UploadBook() {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
-  const [easterEgg, setEasterEgg] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [pending, setPending] = useState(null);
-
-  const checkLocation = async () => {
-    try {
-      const res = await fetch("https://ip-api.com/json/?fields=city,regionName");
-      const data = await res.json();
-      if (data.city === "Austin" && data.regionName === "Texas") {
-        setEasterEgg("Привет, малышка, спасибо что попробовала моё приложение 💜");
-        setTimeout(() => setEasterEgg(null), 8000);
-      }
-    } catch { /* geolocation is best-effort */ }
-  };
 
   const handleFile = async (file) => {
     if (!file) return;
@@ -33,7 +21,6 @@ export default function UploadBook() {
     try {
       const result = await dispatch(uploadBook(formData)).unwrap();
       setPending({ id: result.id, title: result.title, author: result.author });
-      checkLocation();
     } catch {
       /* upload error handled by Redux */
     } finally {
@@ -78,11 +65,6 @@ export default function UploadBook() {
       />
 
       <div className="flex items-center gap-4">
-        {easterEgg && (
-          <p className="text-sm font-medium text-purple-600 animate-pulse">
-            {easterEgg}
-          </p>
-        )}
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
