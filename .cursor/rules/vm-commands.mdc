@@ -1,0 +1,14 @@
+---
+description: Constraints for generating commands intended for the GCP VM
+alwaysApply: true
+---
+
+# GCP VM Command Constraints
+
+The GCP Compute Engine VM (Ubuntu) does not grant sudo access to the user `kemet_dugue`. When generating shell commands for the VM:
+
+- Never use `sudo` in any command
+- Install npm packages locally (project-level) instead of globally (`npm install pm2`, not `npm install -g pm2`)
+- Use `npx` to run locally installed CLI tools
+- Do not attempt to bind to privileged ports (below 1024); use port 3001 instead
+- Do not use `iptables`, `systemctl`, or other commands requiring root
