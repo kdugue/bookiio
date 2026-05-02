@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { generateQuiz } from "../store/quizSlice.js";
+import { deleteBook } from "../store/librarySlice.js";
 
 const statusStyles = {
   ready: "bg-emerald-100 text-emerald-800",
@@ -42,11 +43,26 @@ export default function BookCard({ book }) {
           </h3>
           <p className="text-sm text-gray-500 mt-0.5">{book.author}</p>
         </div>
-        <span
-          className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase ${badge}`}
-        >
-          {statusLabels[book.status] ?? book.status}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={`text-xs font-medium px-2 py-0.5 rounded-full uppercase ${badge}`}
+          >
+            {statusLabels[book.status] ?? book.status}
+          </span>
+          <button
+            onClick={() => {
+              if (confirm(`Delete "${book.title}"?`)) {
+                dispatch(deleteBook(book.id));
+              }
+            }}
+            className="text-gray-300 hover:text-red-500 transition-colors"
+            title="Delete book"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {isReady && (

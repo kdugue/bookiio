@@ -93,6 +93,22 @@ router.patch("/:bookId", async (req, res) => {
   res.json(book);
 });
 
+router.delete("/:bookId", async (req, res) => {
+  const { bookId } = req.params;
+  const db = await readDb();
+  const idx = db.books.findIndex((b) => b.id === bookId);
+  if (idx === -1) return res.status(404).json({ error: "Book not found" });
+
+  const [removed] = db.books.splice(idx, 1);
+  await writeDb(db);
+
+  try {
+    await fs.unlink(path.join(UPLOADS_DIR, removed.filename));
+  } catch { /* file may not exist */ }
+
+  res.json({ message: "Book deleted", bookId });
+});
+
 router.post("/:bookId/ingest", async (req, res) => {
   const { bookId } = req.params;
   const db = await readDb();

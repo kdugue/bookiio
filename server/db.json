@@ -1,38 +1,4 @@
 {
-  "books": [
-    {
-      "id": "rave-diet-001",
-      "title": "The Rave Diet",
-      "author": "Mike Anderson",
-      "filename": "The Rave Diet.txt",
-      "status": "ready",
-      "source": "internal",
-      "addedAt": "2026-05-02T00:00:00.000Z",
-      "chunkCount": 527,
-      "ingestedAt": "2026-05-02T21:21:24.054Z",
-      "chapters": [
-        {
-          "id": "ch-0",
-          "title": "The RAVE Diet & Lifestyle"
-        },
-        {
-          "id": "ch-1",
-          "title": "Other Diet-Related Diseases"
-        },
-        {
-          "id": "ch-2",
-          "title": "Weight Loss Using Old-Fashioned Foods"
-        },
-        {
-          "id": "ch-3",
-          "title": "Why Doesn’t The Government Promote This Diet?"
-        },
-        {
-          "id": "ch-4",
-          "title": "Baseline Measurements: Countering Skepticism"
-        }
-      ]
-    }
-  ],
+  "books": [],
   "quizCache": {}
 }

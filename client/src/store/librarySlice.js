@@ -24,6 +24,14 @@ export const confirmBook = createAsyncThunk(
   }
 );
 
+export const deleteBook = createAsyncThunk(
+  "library/deleteBook",
+  async (bookId) => {
+    await api.delete(`/api/v1/library/${bookId}`);
+    return bookId;
+  }
+);
+
 const librarySlice = createSlice({
   name: "library",
   initialState: {
@@ -51,6 +59,9 @@ const librarySlice = createSlice({
       .addCase(confirmBook.fulfilled, (state, action) => {
         const idx = state.books.findIndex((b) => b.id === action.payload.id);
         if (idx !== -1) state.books[idx] = action.payload;
+      })
+      .addCase(deleteBook.fulfilled, (state, action) => {
+        state.books = state.books.filter((b) => b.id !== action.payload);
       });
   },
 });
