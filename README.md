@@ -126,6 +126,23 @@ cd ~/bookiio && git pull && cd client && npm run build
 # Restart the server (Ctrl+C in the server terminal, then node index.js)
 ```
 
+### Monitoring & Logs
+
+```bash
+# View server logs (last 50 lines)
+npx pm2 logs bookiio --lines 50
+
+# Check process status
+npx pm2 status
+
+# Restart the server
+npx pm2 restart bookiio
+
+# Full restart (kills pm2 daemon — use if paths change)
+npx pm2 kill
+cd ~/bookiio/server && npx pm2 start index.js --name bookiio && npx pm2 save
+```
+
 ### Useful commands
 
 Remove all non-ready books from the database (run on the VM):
