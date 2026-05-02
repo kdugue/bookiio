@@ -2,6 +2,37 @@
 
 A local-first RAG-powered assessment tool that turns books into quizzes with contextual feedback.
 
+## Architecture
+
+```mermaid
+flowchart TD
+    Browser["React + Redux (Vite)"]
+    Express["Express Server :3001"]
+    Static["Static Files (dist/)"]
+    LibAPI["Library API"]
+    AssessAPI["Assessment API"]
+    Gemini["Google Gemini 2.5 Flash"]
+    Chroma["ChromaDB (Vectors)"]
+    FS["Filesystem (db.json, uploads/)"]
+
+    Browser -->|HTTP| Express
+    Express --> Static
+    Express --> LibAPI
+    Express --> AssessAPI
+    AssessAPI -->|RAG query| Chroma
+    AssessAPI -->|generate quiz / analyze| Gemini
+    LibAPI -->|store chunks| Chroma
+    LibAPI -->|read/write| FS
+```
+
+### Request Flow
+
+1. **Upload** — User uploads a book (PDF/TXT) via the React frontend
+2. **Ingest** — Text is extracted, split into chapters, and chunked
+3. **Embed** — Chunks are embedded and stored in ChromaDB
+4. **Quiz** — User requests a quiz; relevant chunks are retrieved (RAG) and sent to Gemini to generate questions
+5. **Feedback** — Wrong answers are analyzed by Gemini with relevant book passages for contextual explanations
+
 ## Quick Start (Local Development)
 
 ### 1. Install dependencies
