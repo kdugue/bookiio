@@ -23,5 +23,5 @@ app.get("*", (_req, res) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Bookio server running on http://0.0.0.0:${PORT}`);
+  console.log(`Bookiio server running on http://0.0.0.0:${PORT}`);
 });

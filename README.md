@@ -1,4 +1,4 @@
-# Bookio
+# Bookiio
 
 A local-first RAG-powered assessment tool that turns books into quizzes with contextual feedback.
 

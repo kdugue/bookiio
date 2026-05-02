@@ -28,7 +28,7 @@ export default function App() {
           <h1
             className="text-2xl font-bold tracking-tight cursor-pointer"
             onClick={() => dispatch(resetQuiz())}
-          >Bookio</h1>
+          >Bookiio</h1>
           {greeting && (
             <p className="text-sm font-medium text-purple-600 animate-pulse">{greeting}</p>
           )}

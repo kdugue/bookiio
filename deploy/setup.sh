@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "=== Bookio VM Setup ==="
+echo "=== Bookiio VM Setup ==="
 
 # Install git and Node.js 22
 echo "Installing system dependencies..."
@@ -51,5 +51,5 @@ npx chroma run --path ./chroma-data &
 sleep 3
 
 # Ingest the seed book if needed
-echo "Starting Bookio on port 80..."
+echo "Starting Bookiio on port 80..."
 sudo -E $(which node) index.js
