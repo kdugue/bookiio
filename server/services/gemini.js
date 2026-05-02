@@ -27,4 +27,30 @@ export async function detectBookMetadata(textSample) {
   };
 }
 
+export async function embedTexts(texts) {
+  const batchSize = 100;
+  const allEmbeddings = [];
+
+  for (let i = 0; i < texts.length; i += batchSize) {
+    const batch = texts.slice(i, i + batchSize);
+    const results = await Promise.all(
+      batch.map((text) =>
+        ai.models.embedContent({
+          model: "gemini-embedding-001",
+          contents: text,
+          config: { outputDimensionality: 768 },
+        })
+      )
+    );
+    for (const r of results) {
+      allEmbeddings.push(r.embeddings[0].values);
+    }
+    if (i + batchSize < texts.length) {
+      console.log(`[embed] Embedded ${Math.min(i + batchSize, texts.length)}/${texts.length} chunks`);
+    }
+  }
+
+  return allEmbeddings;
+}
+
 export default ai;
