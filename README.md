@@ -87,12 +87,12 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Clone and build
-git clone https://github.com/kdugue/bookiio.git ~/bookio
-cd ~/bookio/server && npm install --production
-cd ~/bookio/client && npm install && npm run build
+git clone https://github.com/kdugue/bookiio.git ~/bookiio
+cd ~/bookiio/server && npm install --production
+cd ~/bookiio/client && npm install && npm run build
 
 # Configure environment (replace with your actual key)
-cat > ~/bookio/server/.env << 'EOF'
+cat > ~/bookiio/server/.env << 'EOF'
 GEMINI_API_KEY=your_gemini_api_key_here
 PORT=3001
 CHROMA_HOST=localhost
@@ -100,7 +100,7 @@ CHROMA_PORT=8000
 EOF
 
 # Start ChromaDB in background
-cd ~/bookio/server && npx chroma run --path ./chroma-data &
+cd ~/bookiio/server && npx chroma run --path ./chroma-data &
 sleep 3
 
 # Start the server
@@ -122,7 +122,7 @@ Visit `http://YOUR_VM_EXTERNAL_IP:3001` in your browser.
 ### Updating after code changes
 
 ```bash
-cd ~/bookio && git pull && cd client && npm run build
+cd ~/bookiio && git pull && cd client && npm run build
 # Restart the server (Ctrl+C in the server terminal, then node index.js)
 ```
 
@@ -131,7 +131,7 @@ cd ~/bookio && git pull && cd client && npm run build
 Remove all non-ready books from the database (run on the VM):
 
 ```bash
-cd ~/bookio/server
+cd ~/bookiio/server
 node -e 'const fs=require("fs");const db=JSON.parse(fs.readFileSync("db.json"));db.books=db.books.filter(b=>b.status==="ready");fs.writeFileSync("db.json",JSON.stringify(db,null,2));console.log(db.books.map(b=>b.title))'
 ```
 

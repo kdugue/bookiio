@@ -15,11 +15,11 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            cd ~/bookio
+            cd ~/bookiio 2>/dev/null || cd ~/bookio
             git stash --include-untracked
             git pull origin main
             git checkout stash -- server/db.json 2>/dev/null || true
             git stash drop 2>/dev/null || true
             cd client && npm install && npm run build
             cd ../server && npm install
-            npx pm2 restart bookio || npx pm2 start index.js --name bookio
+            npx pm2 restart bookiio 2>/dev/null || npx pm2 restart bookio 2>/dev/null || npx pm2 start index.js --name bookiio

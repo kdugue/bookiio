@@ -16,7 +16,7 @@ fi
 echo "Node: $(node -v)"
 
 # Clone or pull repo
-REPO_DIR="$HOME/bookio"
+REPO_DIR="$HOME/bookiio"
 if [ -d "$REPO_DIR" ]; then
   echo "Updating repo..."
   cd "$REPO_DIR" && git pull
