@@ -16,7 +16,7 @@ export default function UploadBook() {
         setEasterEgg("Привет, малышка, спасибо что попробовала моё приложение 💜");
         setTimeout(() => setEasterEgg(null), 8000);
       }
-    } catch {}
+    } catch { /* geolocation is best-effort */ }
   };
 
   const handleFile = (file) => {

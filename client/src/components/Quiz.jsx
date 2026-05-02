@@ -52,7 +52,7 @@ export default function Quiz() {
         </button>
       </div>
 
-      <ProgressBar current={currentIndex} total={questions.length} answers={answers} questions={questions} />
+      <ProgressBar current={currentIndex} answers={answers} questions={questions} />
 
       <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mt-4">
         <h3 className="text-lg font-medium text-gray-900 mb-5">{q.question}</h3>
@@ -108,7 +108,7 @@ export default function Quiz() {
   );
 }
 
-function ProgressBar({ current, total, answers, questions }) {
+function ProgressBar({ current, answers, questions }) {
   return (
     <div className="flex gap-1.5">
       {questions.map((q, i) => (
