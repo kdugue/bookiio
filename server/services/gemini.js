@@ -27,4 +27,23 @@ export async function detectBookMetadata(textSample) {
   };
 }
 
+export async function embedTexts(texts) {
+  const allEmbeddings = [];
+
+  for (let i = 0; i < texts.length; i++) {
+    const response = await ai.models.embedContent({
+      model: "gemini-embedding-001",
+      contents: texts[i],
+      config: { outputDimensionality: 768 },
+    });
+    allEmbeddings.push(response.embeddings[0].values);
+
+    if ((i + 1) % 50 === 0 || i === texts.length - 1) {
+      console.log(`[embed] ${i + 1}/${texts.length} chunks embedded`);
+    }
+  }
+
+  return allEmbeddings;
+}
+
 export default ai;
